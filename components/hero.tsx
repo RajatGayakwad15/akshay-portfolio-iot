@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowDown, Linkedin, Download } from "lucide-react";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 export function Hero() {
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
@@ -84,11 +85,17 @@ export function Hero() {
             transition={{ delay: 1 }}
             className="flex flex-wrap justify-center gap-4"
           >
-            <Button size="lg" className="group">
+            {/* <Button size="lg" className="group">
               <a href="#contact" className="flex items-center gap-2">
                 Get In Touch
                 <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
               </a>
+            </Button> */}
+            <Button size="lg" className="group" asChild>
+              <Link href="/gallery" className="flex items-center gap-2">
+                View Project Images
+                <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+              </Link>
             </Button>
             <Button variant="outline" size="lg">
               <a

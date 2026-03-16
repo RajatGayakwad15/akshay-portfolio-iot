@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 const navItems = [
   { name: "Home", href: "#home" },
@@ -14,9 +15,12 @@ const navItems = [
   { name: "Skills", href: "#skills" },
   { name: "Education", href: "#education" },
   { name: "Contact", href: "#contact" },
+  { name: "Gallery", href: "/gallery" },
 ];
 
 export function Navigation() {
+  const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
@@ -25,22 +29,27 @@ export function Navigation() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
 
-      // Get all sections
-      const sections = navItems.map((item) => ({
-        id: item.href.substring(1), // Remove the # from href
-        element: document.querySelector(item.href),
-      }));
+      // Only track section-based active state on the main page
+      if (pathname === "/") {
+        const sectionItems = navItems.filter((item) =>
+          item.href.startsWith("#"),
+        );
 
-      // Find which section is currently in view
-      const scrollPosition = window.scrollY + 100; // Offset for navbar height
+        const sections = sectionItems.map((item) => ({
+          id: item.href.substring(1),
+          element: document.querySelector(item.href),
+        }));
 
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = sections[i];
-        if (section.element) {
-          const sectionTop = (section.element as HTMLElement).offsetTop;
-          if (scrollPosition >= sectionTop) {
-            setActiveSection(section.id);
-            break;
+        const scrollPosition = window.scrollY + 100;
+
+        for (let i = sections.length - 1; i >= 0; i--) {
+          const section = sections[i];
+          if (section.element) {
+            const sectionTop = (section.element as HTMLElement).offsetTop;
+            if (scrollPosition >= sectionTop) {
+              setActiveSection(section.id);
+              break;
+            }
           }
         }
       }
@@ -59,6 +68,20 @@ export function Navigation() {
         block: "start",
       });
     }
+  };
+
+  const handleNavClick = (href: string) => {
+    if (href.startsWith("#")) {
+      if (pathname !== "/") {
+        // Navigate to home page with hash so browser scrolls there
+        router.push("/" + href);
+      } else {
+        scrollToSection(href);
+      }
+    } else {
+      router.push(href);
+    }
+    setIsOpen(false);
   };
 
   return (
@@ -94,18 +117,34 @@ export function Navigation() {
               >
                 <button
                   onClick={() => {
-                    scrollToSection(item.href);
-                    setIsOpen(false);
+                    handleNavClick(item.href);
                   }}
                   className={`text-sm font-medium transition-colors relative py-2 ${
-                    activeSection === item.href.substring(1)
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-primary"
+                    item.href.startsWith("#")
+                      ? activeSection === item.href.substring(1)
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-primary"
+                      : pathname === item.href
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-primary"
                   }`}
                 >
                   {item.name}
                   {/* Underline Animation */}
-                  {activeSection === item.href.substring(1) && (
+                  {item.href.startsWith("#") &&
+                    activeSection === item.href.substring(1) && (
+                    <motion.div
+                      layoutId="navbar-underline"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                      initial={false}
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+                  {!item.href.startsWith("#") && pathname === item.href && (
                     <motion.div
                       layoutId="navbar-underline"
                       className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
@@ -153,18 +192,34 @@ export function Navigation() {
                 <button
                   key={item.name}
                   onClick={() => {
-                    scrollToSection(item.href);
-                    setIsOpen(false);
+                    handleNavClick(item.href);
                   }}
                   className={`block w-full text-left px-3 py-2 text-sm font-medium transition-colors relative ${
-                    activeSection === item.href.substring(1)
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-primary hover:bg-muted"
+                    item.href.startsWith("#")
+                      ? activeSection === item.href.substring(1)
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-primary hover:bg-muted"
+                      : pathname === item.href
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-primary hover:bg-muted"
                   }`}
                 >
                   {item.name}
                   {/* Mobile Active Indicator */}
-                  {activeSection === item.href.substring(1) && (
+                  {item.href.startsWith("#") &&
+                    activeSection === item.href.substring(1) && (
+                    <motion.div
+                      layoutId="mobile-navbar-indicator"
+                      className="absolute left-0 top-0 bottom-0 w-1 bg-primary"
+                      initial={false}
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+                  {!item.href.startsWith("#") && pathname === item.href && (
                     <motion.div
                       layoutId="mobile-navbar-indicator"
                       className="absolute left-0 top-0 bottom-0 w-1 bg-primary"

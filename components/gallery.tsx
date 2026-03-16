@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 type GalleryImage = {
   src: string;
@@ -18,6 +19,7 @@ type GalleryProps = {
 };
 
 export function Gallery({ categories, images }: GalleryProps) {
+  const router = useRouter();
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -51,7 +53,19 @@ export function Gallery({ categories, images }: GalleryProps) {
   return (
     <section className="py-12 bg-muted/30 min-h-screen">
       <div className="container mx-auto px-4">
-        <motion.div
+        {/* <div className="mb-6 flex items-center">
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-full px-4 py-2 text-xs md:text-sm shadow-sm hover:shadow-md transition-all gap-2"
+            onClick={() => router.push("/")}
+          >
+            <span className="text-lg leading-none">←</span>
+            <span>Back to main screen</span>
+          </Button>
+        </div> */}
+
+        {/* <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -63,7 +77,7 @@ export function Gallery({ categories, images }: GalleryProps) {
             Browse project photos and device shots. Click any image to open a
             large gallery view with navigation and thumbnails.
           </p>
-        </motion.div>
+        </motion.div> */}
 
         <div className="flex flex-wrap justify-center gap-3 mb-10">
           {categories.map((category) => (
