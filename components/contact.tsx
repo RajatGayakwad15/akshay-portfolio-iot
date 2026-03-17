@@ -106,7 +106,8 @@ export function Contact() {
       (async () => {
         try {
           // const response = await fetch("https://formspree.io/f/mkgqpvro", {
-          const response = await fetch("", {
+          // const response = await fetch("", {
+          const response = await fetch("https://formspree.io/f/mkoqpgqy", {
             method: "POST",
             headers: {
               Accept: "application/json",
